@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration Confirmed — Finance Club</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+
+    .check-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.4rem;
+      font-size: 2rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.4rem;
+    }
+
+    .sub {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .reg-id-box {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .reg-id-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #15803d;
+      margin-bottom: 4px;
+    }
+
+    .reg-id-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 2px;
+    }
+
+    .details {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      text-align: left;
+      margin-bottom: 1.6rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.88rem;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-key {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .detail-val {
+      color: #0f172a;
+      font-weight: 600;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-word;
+    }
+
+    .paid-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #15803d;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 0.4rem;
+      padding: 10px 28px;
+      background: #0f172a;
+      color: #f59e0b;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .back-btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="check-icon">✓</div>
+
+  <h1>You're Registered!</h1>
+  <p class="sub">Payment confirmed. We'll see you at the event.</p>
+
+  <div class="reg-id-box">
+    <div class="reg-id-label">Your Registration ID</div>
+    <div class="reg-id-value">{{ reg['registration_id'] }}</div>
+  </div>
+
+  <div class="details">
+    <div class="detail-row">
+      <span class="detail-key">Name</span>
+      <span class="detail-val">{{ reg['name'] }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Email</span>
+      <span class="detail-val">{{ reg['email'] }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Phone</span>
+      <span class="detail-val">{{ reg['phone'] }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Branch</span>
+      <span class="detail-val">{{ reg['branch'] }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Year</span>
+      <span class="detail-val">{{ reg['year'] }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Amount Paid</span>
+      <span class="detail-val">₹199</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Payment ID</span>
+      <span class="detail-val" style="font-size:0.78rem; color:#64748b;">{{ reg['payment_id'] }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">Status</span>
+      <span class="detail-val"><span class="paid-badge">✔ Paid</span></span>
+    </div>
+  </div>
+
+  <a href="/" class="back-btn">← Back to Home</a>
+</div>
+
+</body>
+</html>

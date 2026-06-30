@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finance Club — Event Registration</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    .badge {
+      display: inline-block;
+      background: #0f172a;
+      color: #f59e0b;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    .demo-banner {
+      display: {{ 'flex' if demo_mode else 'none' }};
+      align-items: center;
+      gap: 8px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      color: #92400e;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .fee-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #15803d;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 1.6rem;
+    }
+
+    .form-group { margin-bottom: 1.1rem; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    .hint {
+      font-size: 0.74rem;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #111827;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: "▾";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      pointer-events: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+
+    input.error, select.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+    }
+
+    select.placeholder-selected { color: #9ca3af; }
+
+    .err-msg {
+      color: #ef4444;
+      font-size: 0.78rem;
+      margin-top: 4px;
+      display: none;
+    }
+    .err-msg.show { display: block; }
+
+    .row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+      margin-bottom: 1.1rem;
+    }
+    .row-2col .form-group { margin-bottom: 0; }
+
+    #pay-btn {
+      width: 100%;
+      margin-top: 0.6rem;
+      padding: 13px;
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    #pay-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+    #pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    #global-error {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #b91c1c;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .secure-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 1.2rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <span class="badge">Finance Club</span>
+
+  <div class="demo-banner">
+    ⚠ Demo Mode — Add Razorpay test keys in .env to enable real payments
+  </div>
+
+  <h1>Event Registration 2026</h1>
+  <p class="subtitle">Secure your spot at our flagship Finance event.</p>
+
+  <div class="fee-pill">✦ Registration Fee: ₹199</div>
+
+  <!-- CSRF token hidden — Flask injects the real value -->
+  <input type="hidden" id="csrf-token" value="{{ csrf_token }}"/>
+
+  <form id="reg-form" novalidate>
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Rahul Sharma" autocomplete="name"/>
+      <span class="err-msg" id="name-err">Please enter your full name.</span>
+    </div>
+
+    <div class="form-group">
+      <label for="email">College Email Address</label>
+      <input type="email" id="email" placeholder="rahul.sharma@crce.edu.in" autocomplete="email"/>
+      <p class="hint">Must be your @crce.edu.in college email.</p>
+      <span class="err-msg" id="email-err">Please enter a valid @crce.edu.in email.</span>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric"/>
+      <span class="err-msg" id="phone-err">Please enter a valid 10-digit number.</span>
+    </div>
+
+    <div class="form-group">
+      <label for="roll_number">Roll Number</label>
+      <input type="text" id="roll_number" placeholder="e.g. 10234" maxlength="5" inputmode="numeric" pattern="\d{5}"/>
+      <p class="hint">Exactly 5 digits, numbers only.</p>
+      <span class="err-msg" id="roll_number-err">Roll number must be exactly 5 digits.</span>
+    </div>
+
+    <div class="row-2col">
+      <div class="form-group">
+        <label for="branch">Branch</label>
+        <div class="select-wrap">
+          <select id="branch" class="placeholder-selected">
+            <option value="" disabled selected>Select branch</option>
+            <option value="Computer Engineering">Computer Engineering</option>
+            <option value="Computer Science &amp; Engineering">Computer Science &amp; Engineering</option>
+            <option value="Electronics &amp; CS Engineering">Electronics &amp; CS Engineering</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+          </select>
+        </div>
+        <span class="err-msg" id="branch-err">Please select your branch.</span>
+      </div>
+
+      <div class="form-group">
+        <label for="year">Year</label>
+        <div class="select-wrap">
+          <select id="year" class="placeholder-selected">
+            <option value="" disabled selected>Select year</option>
+            <option value="First Year">First Year</option>
+            <option value="Second Year">Second Year</option>
+            <option value="Third Year">Third Year</option>
+            <option value="Fourth Year">Fourth Year</option>
+          </select>
+        </div>
+        <span class="err-msg" id="year-err">Please select your year.</span>
+      </div>
+    </div>
+
+    <button type="submit" id="pay-btn">Pay ₹199 &amp; Register</button>
+    <div id="global-error"></div>
+
+  </form>
+
+  <div class="secure-note">🔒 Payments secured by Razorpay</div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const form      = document.getElementById("reg-form");
+  const payBtn    = document.getElementById("pay-btn");
+  const gError    = document.getElementById("global-error");
+  const DEMO_MODE = {{ 'true' if demo_mode else 'false' }};
+  const RZP_KEY   = "{{ razorpay_key_id }}";
+  const EMAIL_DOMAIN = "crce.edu.in";
+
+  // CSRF token — embedded by Flask, rotates after each order
+  let csrfToken   = document.getElementById("csrf-token").value;
+
+  ["branch","year"].forEach(id => {
+    document.getElementById(id).addEventListener("change", function() {
+      this.classList.remove("placeholder-selected");
+    });
+  });
+
+  // Roll number: digits only, max 5 chars, as the user types
+  const rollInput = document.getElementById("roll_number");
+  rollInput.addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, "").slice(0, 5);
+  });
+
+  // Phone: digits only, max 10 chars, as the user types
+  const phoneInput = document.getElementById("phone");
+  phoneInput.addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, "").slice(0, 10);
+  });
+
+  // ── Client-side validation (UX only — server re-validates everything) ──
+  function showErr(id, errId) {
+    document.getElementById(id).classList.add("error");
+    document.getElementById(errId).classList.add("show");
+  }
+  function clearErr(id, errId) {
+    document.getElementById(id).classList.remove("error");
+    document.getElementById(errId).classList.remove("show");
+  }
+
+  function validate() {
+    let ok = true;
+    const name        = document.getElementById("name").value.trim();
+    const email       = document.getElementById("email").value.trim().toLowerCase();
+    const phone       = document.getElementById("phone").value.trim();
+    const rollNumber  = document.getElementById("roll_number").value.trim();
+    const branch      = document.getElementById("branch").value;
+    const year        = document.getElementById("year").value;
+
+    if (name.length < 2)
+      { showErr("name","name-err"); ok=false; } else { clearErr("name","name-err"); }
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.endsWith("@" + EMAIL_DOMAIN);
+    if (!emailOk)
+      { showErr("email","email-err"); ok=false; } else { clearErr("email","email-err"); }
+
+    if (!/^\d{10}$/.test(phone))
+      { showErr("phone","phone-err"); ok=false; } else { clearErr("phone","phone-err"); }
+
+    if (!/^\d{5}$/.test(rollNumber))
+      { showErr("roll_number","roll_number-err"); ok=false; } else { clearErr("roll_number","roll_number-err"); }
+
+    if (!branch)
+      { showErr("branch","branch-err"); ok=false; } else { clearErr("branch","branch-err"); }
+    if (!year)
+      { showErr("year","year-err"); ok=false; } else { clearErr("year","year-err"); }
+
+    return ok;
+  }
+
+  ["name","email","phone","roll_number"].forEach(id =>
+    document.getElementById(id).addEventListener("input", () => clearErr(id, id+"-err"))
+  );
+  ["branch","year"].forEach(id =>
+    document.getElementById(id).addEventListener("change", () => clearErr(id, id+"-err"))
+  );
+
+  // ── Razorpay modal ────────────────────────────────────────────────────
+  function openRazorpay(orderData) {
+    const options = {
+      key:         RZP_KEY,
+      amount:      orderData.amount,
+      currency:    "INR",
+      name:        "Finance Club",
+      description: "Event Registration Fee",
+      order_id:    orderData.order_id,
+      prefill: { name: orderData.name, email: orderData.email, contact: orderData.phone },
+      theme: { color: "#1d4ed8" },
+
+      handler: async function(response) {
+        if (DEMO_MODE) {
+          showGlobalSuccess("✅ Demo payment successful! In production this redirects to the confirmation page.");
+          payBtn.disabled = false;
+          payBtn.textContent = "Pay ₹199 & Register";
+          return;
+        }
+        payBtn.textContent = "Verifying payment…";
+        try {
+          const vRes = await fetch("/verify-payment", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_order_id:   response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature:  response.razorpay_signature,
+              registration_id:     orderData.registration_id,
+            }),
+          });
+          const vData = await vRes.json();
+          if (!vRes.ok) throw new Error(vData.error || "Verification failed");
+          window.location.href = vData.redirect;
+        } catch (err) {
+          showGlobalError(err.message);
+        }
+      },
+
+      modal: {
+        ondismiss: function() {
+          payBtn.disabled    = false;
+          payBtn.textContent = "Pay ₹199 & Register";
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.on("payment.failed", function(resp) {
+      showGlobalError("Payment failed: " + resp.error.description);
+    });
+    rzp.open();
+  }
+
+  // ── Submit ────────────────────────────────────────────────────────────
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    gError.style.display = "none";
+    if (!validate()) return;
+
+    payBtn.disabled    = true;
+    payBtn.textContent = "Creating order…";
+
+    const payload = {
+      name:        document.getElementById("name").value.trim(),
+      email:       document.getElementById("email").value.trim().toLowerCase(),
+      phone:       document.getElementById("phone").value.trim(),
+      roll_number: document.getElementById("roll_number").value.trim(),
+      branch:      document.getElementById("branch").value,
+      year:        document.getElementById("year").value,
+      csrf_token:  csrfToken,   // server verifies this matches the session
+    };
+
+    if (DEMO_MODE) {
+      payBtn.textContent = "Pay ₹199 & Register";
+      openRazorpay({ amount: 19900, order_id: undefined, ...payload, registration_id: "DEMO-0001" });
+      return;
+    }
+
+    let orderData;
+    try {
+      const res = await fetch("/create-order", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(payload),
+      });
+      orderData = await res.json();
+      if (!res.ok) {
+        // Surface the first field-specific error if present, else the general one
+        if (orderData.fields) {
+          const firstField = Object.keys(orderData.fields)[0];
+          throw new Error(orderData.fields[firstField]);
+        }
+        throw new Error(orderData.error || "Order creation failed");
+      }
+    } catch (err) {
+      showGlobalError(err.message);
+      return;
+    }
+
+    openRazorpay(orderData);
+    payBtn.textContent = "Pay ₹199 & Register";
+  });
+
+  function showGlobalError(msg) {
+    gError.textContent   = "⚠ " + msg;
+    gError.style.display = "block";
+    payBtn.disabled      = false;
+    payBtn.textContent   = "Pay ₹199 & Register";
+  }
+
+  function showGlobalSuccess(msg) {
+    let el = document.getElementById("success-msg");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "success-msg";
+      el.style.cssText = "margin-top:1rem;background:#f0fdf4;border:1px solid #86efac;color:#15803d;border-radius:8px;padding:10px 14px;font-size:0.85rem;text-align:center;font-weight:600;";
+      payBtn.after(el);
+    }
+    el.textContent   = msg;
+    el.style.display = "block";
+  }
+</script>
+</body>
+</html>
